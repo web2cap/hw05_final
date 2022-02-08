@@ -339,7 +339,8 @@ class TaskPagesTests(TestCase):
         )
 
     def test_autorized_can_follow_follow(self):
-        """Авторизованный пользователь может подписываться на других пользователей."""
+        """Авторизованный пользователь может подписываться
+        на других пользователей."""
 
         profile_redirect_address = reverse(
             "posts:profile", kwargs={"username": self.user_second.username}
@@ -357,7 +358,8 @@ class TaskPagesTests(TestCase):
         self.assertEqual(context_first_object.author, self.user_second)
 
     def test_autorized_can_unfollow(self):
-        """Авторизованный пользователь может удалять других пользователей из подписок."""
+        """Авторизованный пользователь может удалять из подписок
+        других пользователей."""
 
         profile_redirect_address = reverse(
             "posts:profile", kwargs={"username": self.user_second.username}
