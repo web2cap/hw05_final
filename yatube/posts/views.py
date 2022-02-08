@@ -14,7 +14,7 @@ def index(request):
     с учетом номера страницы переданного в GET.
     """
 
-    post_list = Post.objects.all()
+    post_list = Post.objects.select_related("group").all()
     page_obj = paginations(request, post_list)
 
     context = {
@@ -40,15 +40,15 @@ def group_posts(request, slug):
 
 def profile(request, username):
     """Список постов пользователя, общее количество постов,
-    инофрмация о пользователе."""
+    инофрмация о пользователе, кнопка подписаться/отписаться."""
 
     author = get_object_or_404(User, username=username)
 
     post_list = author.posts.all()
     page_obj = paginations(request, post_list)
     following = False
-    if request.user.is_authenticated:
-        if Follow.objects.filter(user=request.user, author=author).count():
+    if request.user.is_authenticated and request.user != author:
+        if Follow.objects.filter(user=request.user, author=author).exists():
             following = "can_unfollow"
         else:
             following = "can_follow"
@@ -155,11 +155,8 @@ def profile_follow(request, username):
     """Подписаться на автора."""
 
     author = get_object_or_404(User, username=username)
-    allready_follow = Follow.objects.filter(
-        user=request.user, author=author
-    ).count()
-    if not allready_follow and request.user != author:
-        Follow.objects.create(user=request.user, author=author)
+    if request.user != author:
+        Follow.objects.get_or_create(user=request.user, author=author)
 
     return redirect("posts:profile", username)
 
@@ -170,4 +167,5 @@ def profile_unfollow(request, username):
 
     author = get_object_or_404(User, username=username)
     Follow.objects.filter(user=request.user, author=author).delete()
+
     return redirect("posts:profile", username)

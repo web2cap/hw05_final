@@ -20,6 +20,10 @@ class Group(models.Model):
         verbose_name="Описание", help_text="Введите описание группы"
     )
 
+    class Meta:
+        verbose_name = "Группа"
+        verbose_name_plural = "Группы"
+
     def __str__(self) -> str:
         return self.title
 
@@ -59,7 +63,7 @@ class Comment(CreatedModel):
         Post,
         on_delete=models.CASCADE,
         related_name="comments",
-        verbose_name="Комментарии",
+        verbose_name="Пост",
     )
     author = models.ForeignKey(
         User,
@@ -93,3 +97,15 @@ class Follow(models.Model):
         related_name="following",
         verbose_name="Автор",
     )
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="unique_follow"
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user.username} на {self.author.username}"

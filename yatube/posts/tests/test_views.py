@@ -8,7 +8,8 @@ from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from posts.models import Group, Post
+
+from posts.models import Follow, Group, Post
 
 User = get_user_model()
 
@@ -87,6 +88,8 @@ class TaskPagesTests(TestCase):
 
         self.authorized_client_second = Client()
         self.authorized_client_second.force_login(self.user_second)
+
+        Follow.objects.all().delete()
 
     def db_vs_context_comparison(
         self, context_object, db_object, no_iamge=False
@@ -335,9 +338,8 @@ class TaskPagesTests(TestCase):
             no_iamge=True,
         )
 
-    def test_autorized_can_follow_unfollow(self):
-        """Авторизованный пользователь может подписываться на других пользователей
-        и удалять других пользователей из подписок."""
+    def test_autorized_can_follow_follow(self):
+        """Авторизованный пользователь может подписываться на других пользователей."""
 
         profile_redirect_address = reverse(
             "posts:profile", kwargs={"username": self.user_second.username}
@@ -354,12 +356,25 @@ class TaskPagesTests(TestCase):
         context_first_object = response.context["page_obj"][0]
         self.assertEqual(context_first_object.author, self.user_second)
 
+    def test_autorized_can_unfollow(self):
+        """Авторизованный пользователь может удалять других пользователей из подписок."""
+
+        profile_redirect_address = reverse(
+            "posts:profile", kwargs={"username": self.user_second.username}
+        )
+
+        Follow.objects.create(user=self.user, author=self.user_second)
+        response = self.authorized_client.get(reverse("posts:follow_index"))
+        context_first_object = response.context["page_obj"][0]
+        self.assertEqual(context_first_object.author, self.user_second)
+
         response = self.authorized_client.get(
             reverse(
                 "posts:profile_unfollow",
                 kwargs={"username": self.user_second.username},
             )
         )
+
         self.assertRedirects(response, profile_redirect_address)
         response = self.authorized_client.get(
             reverse(
