@@ -169,7 +169,7 @@ class PostCreateFormTests(TestCase):
     def test_comment_add_cant_guest(self):
         "Оставлять комментарии не может гость."
         comment_count = Comment.objects.filter(post=self.post).count()
-        comment_text = f"Комментарий от гостя"
+        comment_text = "Комментарий от гостя"
         form_data = {"text": comment_text}
         response = self.client.post(
             reverse(

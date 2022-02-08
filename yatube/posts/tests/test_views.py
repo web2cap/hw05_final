@@ -63,7 +63,7 @@ class TaskPagesTests(TestCase):
                 )
             )
         image_small_gif_uploaded = SimpleUploadedFile(
-            name=f"posts/post_second_image.gif",
+            name="posts/post_second_image.gif",
             content=cls.image_small_gif,
             content_type="image/gif",
         )
