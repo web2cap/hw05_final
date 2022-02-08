@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Зарегистрироваться{% endblock %}
+{% block content %}
+  {% with form_header='Зарегистрироваться' form_button='Зарегистрироваться' form_url='users:signup' %}
+    {% include 'users/includes/form.html' %} 
+  {% endwith %}
+{% endblock %}
