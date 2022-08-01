@@ -11,7 +11,7 @@ Redefined standard server error pages, performed optimization and caching.
 
 This is the final version of the project.
 
-API for the social network of authors is made in a separate repository https://github.com/web2cap/api_yamdb/
+API for the social network of authors is made in a separate repository https://github.com/web2cap/api_final_yatube
 
 
 Сloned from: https://github.com/web2cap/hw04_tests
